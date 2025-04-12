@@ -117,12 +117,14 @@ def process_screenshots():
         # Combine and analyze the data
         combined_data = f"\n{text1}\n{text2}"
         analysis_filename = f"analysis_{timestamp}.txt"
-        analysis_filepath = os.path.join(screenshot_folder, analysis_filename)
+        os.makedirs('textfiles', exist_ok=True)
+        analysis_filepath = os.path.join('textfiles', analysis_filename)
         with open(analysis_filepath, 'w', encoding='utf-8') as f:
             f.write(combined_data)
         print(f"Data analysis saved to: {analysis_filepath}")
     except Exception as e:
         print(f"Error processing screenshots: {e}")
+
 
 #main loop and listener
 keyboard.add_hotkey('alt+ctrl+1', regloop)
