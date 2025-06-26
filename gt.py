@@ -124,15 +124,14 @@ def process_screenshots():
         print(f"Data analysis saved to: {analysis_filepath}")
     except Exception as e:
         print(f"Error processing screenshots: {e}")
-
-
+        
 #main loop and listener
 keyboard.add_hotkey('alt+ctrl+1', regloop)
 keyboard.add_hotkey('alt+ctrl+esc', exit_program)
 
 try:
     print("Giveaway tracker running. Press Alt+Ctrl+1 to take a screenshot, Alt+Ctrl+Esc to exit.")
-    print("Text extraction with pytesseract is enabled.")
+    print("Text extraction with psytesseract is enabled.")
     while True:
         time.sleep(1)
 except KeyboardInterrupt:
