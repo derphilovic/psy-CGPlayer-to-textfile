@@ -2,13 +2,13 @@
 import keyboard # type: ignore
 import time
 import pyautogui # type: ignore
-import datetime
+import glob
 import os
 import sys
 import pytesseract # type: ignore
 from PIL import Image, ImageEnhance, ImageOps # type: ignore
 import numpy as np # type: ignore
-
+import google.genai as genai
 
 #variables and setup
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -16,6 +16,9 @@ screenshot_folder = "screenshots"
 os.makedirs(screenshot_folder, exist_ok=True)
 l = 0
 timestamp = 0
+
+client  = genai.Client(api_key="get it yourself")
+
 
 #resolution adaption
 regxstart = 721
@@ -125,7 +128,31 @@ def process_screenshots():
     except Exception as e:
         print(f"Error processing screenshots: {e}")
         
+
+#sending api request + files
+def get_result():
+    file_paths = glob.glob("textfiles/*.txt")
+    uploaded_files = []
+    for path in file_paths:
+        print(f"Uploading {path}...")
+        file_ref = client.files.upload(file=path)
+        uploaded_files.append(file_ref)
+    response = client.models.generate_content(
+    model="gemini-2.5-flash", contents=["!RETURN ONLY THE FINAL LIST WRITE NOTHING ELSE! Truncate the names in the files. Make them readable, warning names can differ from file to file, Repeat the names in the files, print each one out. If name x was in the list more than 3 times it gets printed x-2(x is amount of same names in file) often.",
+                                         uploaded_files]
+    )
+
+    print("=" * 40)
+    print(response.text)
+    print("=" * 40)
+
+    # To delete all files after getting your answer:
+    for f in uploaded_files:
+        client.files.delete(name=f.name)
+        print(f"Deleted temp file")
+
 #main loop and listener
+keyboard.add_hotkey('alt+ctrl+3', get_result)
 keyboard.add_hotkey('alt+ctrl+1', regloop)
 keyboard.add_hotkey('alt+ctrl+esc', exit_program)
 
